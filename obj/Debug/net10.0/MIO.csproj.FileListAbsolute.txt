@@ -1,0 +1,4 @@
+C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net10.0\MIO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net10.0\MIO.AssemblyInfoInputs.cache
+C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net10.0\MIO.AssemblyInfo.cs
+C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net10.0\MIO.csproj.CoreCompileInputs.cache

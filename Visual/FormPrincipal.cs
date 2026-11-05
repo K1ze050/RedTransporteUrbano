@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ProyectoRedTransporte
@@ -23,8 +24,12 @@ namespace ProyectoRedTransporte
 
         private void BtnCargarDatos_Click(object sender, EventArgs e)
         {
-            string msjP = LectorCSV.CargarParadas("paradas.csv", trieNombres, tablaParadas, grafoRed, conjuntosUF);
-            string msjC = LectorCSV.CargarConexiones("conexiones.csv", grafoRed, conjuntosUF);
+            // Se construyen las rutas apuntando a la subcarpeta "datos"
+            string rutaParadas = Path.Combine("Datos", "paradas.csv");
+            string rutaConexiones = Path.Combine("Datos", "conexiones.csv");
+
+            string msjP = LectorCSV.CargarParadas(rutaParadas, trieNombres, tablaParadas, grafoRed, conjuntosUF);
+            string msjC = LectorCSV.CargarConexiones(rutaConexiones, grafoRed, conjuntosUF);
             Log("DATOS CARGADOS:\n" + msjP + "\n" + msjC);
         }
 

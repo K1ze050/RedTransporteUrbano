@@ -89,6 +89,58 @@ namespace ProyectoRedTransporte
             }
         }
 
+        private void BtnEjecutarBFS_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(codigoOrigenSeleccionado))
+            {
+                MessageBox.Show("Debe seleccionar un origen para iniciar el recorrido BFS.");
+                return;
+            }
+
+            Log("\n--- INICIANDO EXPLORACIÓN EN ANCHURA (BFS) ---");
+            Parada origen = tablaParadas.Buscar(codigoOrigenSeleccionado);
+            Log($"Punto de partida: {origen.Nombre} [{origen.Codigo}]");
+
+            int totalVisitados;
+            string[] resultado = grafoRed.BFS(codigoOrigenSeleccionado, out totalVisitados);
+
+            string caminoStr = "";
+            for (int i = 0; i < totalVisitados; i++)
+            {
+                caminoStr += resultado[i];
+                if (i < totalVisitados - 1) caminoStr += " -> ";
+            }
+
+            Log($"Nodos explorados por nivel (BFS): {totalVisitados}");
+            Log("Secuencia de visita: " + caminoStr);
+        }
+
+        private void BtnEjecutarDFS_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(codigoOrigenSeleccionado))
+            {
+                MessageBox.Show("Debe seleccionar un origen para iniciar el recorrido DFS.");
+                return;
+            }
+
+            Log("\n--- INICIANDO EXPLORACIÓN EN PROFUNDIDAD (DFS) ---");
+            Parada origen = tablaParadas.Buscar(codigoOrigenSeleccionado);
+            Log($"Punto de partida: {origen.Nombre} [{origen.Codigo}]");
+
+            int totalVisitados;
+            string[] resultado = grafoRed.DFS(codigoOrigenSeleccionado, out totalVisitados);
+
+            string caminoStr = "";
+            for (int i = 0; i < totalVisitados; i++)
+            {
+                caminoStr += resultado[i];
+                if (i < totalVisitados - 1) caminoStr += " -> ";
+            }
+
+            Log($"Nodos explorados por rama (DFS): {totalVisitados}");
+            Log("Secuencia de visita: " + caminoStr);
+        }
+
         private void Log(string mensaje)
         {
             rtbConsola.AppendText(mensaje + "\n");

@@ -10,7 +10,7 @@ de menor costo entre 2 puntos cualesquiera.
 
 
 ## ESTRUCTURAS
-### TRIE:
+### TRIE
 Usado en la busqueda de puntos de inicio y fin  prediciendo palabras
 mediante sus prefijos, como buscador de internet.
 
@@ -26,6 +26,10 @@ instantanea con o(1).
 Comprueba la veracidad de los caminos que se desea recorrer. Cuando usamos dikstra para el 
 camino más corto, con unionfind verificamos que aunque existe un camino más corto, si no esta
 conectado con una arista.
+
+### MinHeap
+Para hacer recorrido mediante BFS usaremos el minHeap para apoyarnos de la elección
+del objeto de mayor prioridad.
 
 
 ## EJECUCIÓN

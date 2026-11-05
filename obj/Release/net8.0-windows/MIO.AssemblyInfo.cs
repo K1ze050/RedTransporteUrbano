@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MIO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+396103ff5de17809e4811050c97360fbb7a5ba6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+547a662fa39bc417b80358053b9bfd40c870f5fb")]
 [assembly: System.Reflection.AssemblyProductAttribute("MIO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MIO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -13,3 +13,6 @@ C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\De
 C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net8.0-windows\MIO.genruntimeconfig.cache
 C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net8.0-windows\ref\MIO.dll
 C:\Users\ADMIN\Desktop\Rafael Landivar\4to Semestre\EST 2\PROYECTO #2\MIO\obj\Debug\net8.0-windows\MIO.sourcelink.json
+C:\Users\carlo\Desktop\PROYECTO ED2\obj\Debug\net8.0-windows\MIO.dll
+C:\Users\carlo\Desktop\PROYECTO ED2\obj\Debug\net8.0-windows\refint\MIO.dll
+C:\Users\carlo\Desktop\PROYECTO ED2\obj\Debug\net8.0-windows\MIO.pdb

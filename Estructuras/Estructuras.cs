@@ -220,46 +220,57 @@ namespace ProyectoRedTransporte
     // =====================================================================
     // INTEGRANTE 2: GRAFOS Y ALGORITMOS DE CAMINOS ÓPTIMOS
     // =====================================================================
-    
-    // MinHeap.cs  -  Cola de prioridad propia (min-heap binario sobre arreglos)
+
+
     public class MinHeap
     {
-        private int[] vertices;
-        private double[] prioridades;
-        private int tamano;
+        private int[] vertices;        // Guarda los índices de los vértices
+        private double[] prioridades;  // Guarda las distancias o pesos asociados a cada vértice
+        private int tamano;            // Cantidad actual de elementos almacenados en el montículo
 
         public MinHeap(int capacidadInicial = 16)
         {
+            // Si nos pasan una capacidad inválida, usamos 16 por defecto
             if (capacidadInicial < 1) capacidadInicial = 16;
             vertices = new int[capacidadInicial];
             prioridades = new double[capacidadInicial];
-            tamano = 0;
+            tamano = 0; // Al inicio el montículo está vacío
         }
 
-        // Inserta un par (vértice, prioridad): O(log n)
+
+        /// Inserta un nuevo par (vértice, prioridad) y reordena flotando el elemento.
         public void Insertar(int vertice, double prioridad)
         {
+            // Si el arreglo se llena, duplicamos la capacidad manualmente
             if (tamano == vertices.Length) Crecer();
 
+            // El nuevo elemento se coloca al final (primer espacio libre)...
             vertices[tamano] = vertice;
             prioridades[tamano] = prioridad;
-            SubirElemento(tamano);
+            // ...y se "sube" hasta que quede en una posición válida del heap
+            SubirElemento(tamano); // Reordenar hacia arriba
             tamano++;
         }
 
-        // Extrae el par con menor prioridad: O(log n). Devuelve false si está vacío.
+
+        /// Extrae la raíz (el elemento con menor distancia/prioridad).
+        /// Devuelve false si el montículo está vacío.
         public bool ExtraerMin(out int vertice, out double prioridad)
         {
+            // Valores por defecto en caso de que esté vacío
             vertice = -1;
             prioridad = double.PositiveInfinity;
             if (tamano == 0) return false;
 
+            // La raíz (índice 0) siempre contiene el menor elemento
             vertice = vertices[0];
             prioridad = prioridades[0];
 
             tamano--;
             if (tamano > 0)
             {
+                // Movemos el último elemento a la raíz y reordenamos hacia abajo
+                // (así el arreglo no queda con un hueco en la posición 0)
                 vertices[0] = vertices[tamano];
                 prioridades[0] = prioridades[tamano];
                 BajarElemento(0);
@@ -267,38 +278,46 @@ namespace ProyectoRedTransporte
             return true;
         }
 
+        // Flota el nodo i mientras sea menor que su padre (Propiedad de Min-Heap)
         private void SubirElemento(int i)
         {
-            while (i > 0)
+            while (i > 0) // Se detiene al llegar a la raíz
             {
                 int padre = (i - 1) / 2;
                 if (prioridades[i] < prioridades[padre])
                 {
+                    // El hijo es menor que el padre: se intercambian y seguimos subiendo
                     Intercambiar(i, padre);
                     i = padre;
                 }
-                else break;
+                else break; // Ya cumple la propiedad, no hay que seguir
             }
         }
 
+        // Hunde el nodo i comparándolo con sus hijos izquierdo y derecho
         private void BajarElemento(int i)
         {
             while (true)
             {
                 int izq = 2 * i + 1;
                 int der = 2 * i + 2;
-                int menor = i;
+                int menor = i; // Asumimos que el menor es el propio nodo
 
+                // Verificamos que el hijo exista (izq < tamano) y si es menor que el actual "menor"
                 if (izq < tamano && prioridades[izq] < prioridades[menor]) menor = izq;
                 if (der < tamano && prioridades[der] < prioridades[menor]) menor = der;
 
+                // Si ningún hijo es menor, el nodo ya está en su lugar
                 if (menor == i) break;
 
+                // Si no, se intercambia con el hijo menor y se sigue bajando
                 Intercambiar(i, menor);
                 i = menor;
             }
         }
 
+        // Intercambia posiciones en los arreglos paralelos
+        // (hay que intercambiar en AMBOS arreglos para no desincronizar vértice y prioridad)
         private void Intercambiar(int a, int b)
         {
             int tv = vertices[a];
@@ -310,7 +329,8 @@ namespace ProyectoRedTransporte
             prioridades[b] = tp;
         }
 
-        // Duplica la capacidad copiando manualmente (sin colecciones nativas).
+        // Redimensionamiento manual de arreglos 
+        // Crea arreglos del doble de tamaño y copia los elementos existentes
         private void Crecer()
         {
             int[] nuevosVertices = new int[vertices.Length * 2];
@@ -325,43 +345,61 @@ namespace ProyectoRedTransporte
         }
     }
 
-    // Nodo de la lista enlazada de adyacencia (una arista saliente).
+
+    // ---------------------------------------------------------------------
+    // NODO DE LA LISTA ENLAZADA DE ADYACENCIA
+    // ---------------------------------------------------------------------
+    // Representa un arco o conexión orientada hacia un destino con un peso.
+    // Cada vértice tiene una lista enlazada de estos nodos: sus "vecinos".
     public class NodoArista
     {
-        public int Destino;
-        public double Peso;
-        public NodoArista? Siguiente;
+        public int Destino;          // Índice del vértice destino
+        public double Peso;          // Peso/Distancia de la conexión
+        public NodoArista? Siguiente;// Puntero a la siguiente arista adyacente
 
         public NodoArista(int destino, double peso)
         {
             Destino = destino;
             Peso = peso;
-            Siguiente = null;
+            Siguiente = null; // Al crearse, aún no tiene siguiente
         }
     }
 
-    // Resultado de una consulta de ruta.
+
+    // ---------------------------------------------------------------------
+    // ESTRUCTURA DE RETORNO DE RUTA
+    // ---------------------------------------------------------------------
+    // Almacena los resultados del algoritmo de Dijkstra.
     public class RutaResultado
     {
-        public bool Existe = false;
-        public double DistanciaTotal = 0;
-        public int CantidadParadas = 0;
-        public string[] Codigos = new string[0];
-        public Parada[] Paradas = new Parada[0];
-        public string Mensaje = "";
+        public bool Existe = false;                  // true si se encontró una ruta
+        public double DistanciaTotal = 0;            // Suma de los pesos del camino 
+        public int CantidadParadas = 0;              // Cuántas paradas tiene el camino
+        public string[] Codigos = new string[0];     // Códigos de las paradas, en orden origen -> destino
+        public Parada[] Paradas = new Parada[0];     // Objetos Parada del camino, en el mismo orden
+        public string Mensaje = "";                  // Mensaje de error
     }
 
+
+    // ---------------------------------------------------------------------
+    // ESTRUCTURA DEL GRAFO PONDERADO
+    // ---------------------------------------------------------------------
+    // Soporta Grafos Dirigidos / No Dirigidos con listas de adyacencia propias.
+    //
+    // Cada vértice (parada) recibe un índice numérico 0, 1, 2... y los datos
+    // de ese vértice se guardan en la MISMA posición de varios arreglos:
+    //   codigos[i], paradas[i], cabezas[i], colas[i]
     public class Grafo
     {
-        private bool dirigido;
-        private int capacidad;
-        private int cantidadSlots;       // índices asignados
+        private bool dirigido;                   // Flag para saber si es dirigido o no dirigido
+        private int capacidad;                   // Tamaño del arreglo interno
+        private int cantidadSlots;               // Cantidad actual de vértices registrados
 
-        private string[] codigos;
-        private Parada?[] paradas;
-        private NodoArista?[] cabezas;
-        private NodoArista?[] colas;
-        private TablaHash<string, int> indices;   // código -> (índice + 1)
+        private string[] codigos;                // Arreglo de códigos de paradas
+        private Parada?[] paradas;               // Arreglo de objetos Parada
+        private NodoArista?[] cabezas;           // Lista de adyacencia: cabeza de la lista (primera arista de cada vértice)
+        private NodoArista?[] colas;             // Lista de adyacencia: cola de la lista (última arista; permite insertar en O(1))
+        private TablaHash<string, int> indices;  // Mapeo Hash: Código -> Índice en los arreglos
 
         public Grafo(bool dirigido = false, int capacidadInicial = 16)
         {
@@ -371,109 +409,134 @@ namespace ProyectoRedTransporte
             paradas = new Parada?[capacidad];
             cabezas = new NodoArista?[capacidad];
             colas = new NodoArista?[capacidad];
-            indices = new TablaHash<string, int>(101);
+            indices = new TablaHash<string, int>(101); // 101 = tamaño de la tabla hash
         }
 
-        // Total de índices asignados (útil para dimensionar Union-Find: 0..CapacidadIndices-1).
+        // Propiedad de solo lectura: devuelve cuántos vértices hay registrados
         public int CapacidadIndices
         {
             get { return cantidadSlots; }
         }
 
-        // Agrega una parada como vértice: O(1) promedio. false si ya existe el código.
+        // Registra un nuevo vértice en los arreglos del grafo
         public bool AgregarVertice(Parada parada)
         {
+            // Si el código ya existe, no se duplica el vértice
             if (ObtenerIndice(parada.Codigo) != -1) return false;
+            // Si los arreglos están llenos, se agranda
             if (cantidadSlots == capacidad) CrecerArreglos();
 
-            int idx = cantidadSlots;
+            int idx = cantidadSlots; // El nuevo vértice ocupa la primera posición libre
             codigos[idx] = parada.Codigo;
             paradas[idx] = parada;
-            indices.Insertar(parada.Codigo, idx + 1);
+            // Se guarda idx + 1 porque la tabla hash devuelve 0 cuando NO encuentra
+            // la clave, así el índice 0 real no se confunde con "no existe"
+            indices.Insertar(parada.Codigo, idx + 1); // Guarda índice base 1 en Hash
             cantidadSlots++;
             return true;
         }
 
-        // Índice interno de un código, o -1 si no existe: O(1) promedio (TablaHash).
+        // Obtiene el índice interno asociado a un código único
         public int ObtenerIndice(string codigo)
         {
             if (string.IsNullOrEmpty(codigo)) return -1;
-            return indices.Buscar(codigo) - 1;     // 0 (no encontrado) -> -1
+            // Se resta 1 para deshacer el "+1" de AgregarVertice.
+            // Si no existe, Buscar devuelve 0 y el resultado es -1
+            return indices.Buscar(codigo) - 1; // Retorna -1 si no se encuentra
         }
 
-        // Agrega (o actualiza) una arista. Si peso es null se usa la distancia Haversine.
+        // Agrega una arista ponderada entre dos vértices
         public bool AgregarArista(string codigoOrigen, string codigoDestino, double? peso = null)
         {
             int u = ObtenerIndice(codigoOrigen);
             int v = ObtenerIndice(codigoDestino);
+            // Si alguno de los dos vértices no existe, no se puede conectar
             if (u == -1 || v == -1) return false;
 
+            // Si el peso es nulo, calcula la distancia Haversine automáticamente
             double w = peso ?? DistanciaHaversine(paradas[u]!, paradas[v]!);
             PonerArco(u, v, w);
-            if (!dirigido && u != v) PonerArco(v, u, w);
+            if (!dirigido && u != v) PonerArco(v, u, w); // Si es no dirigido, conecta ambos lados
             return true;
         }
 
-        // Inserta el arco u->v al final de la lista.
+        // Inserta un nodo de arista al final de la lista enlazada del vértice u
         private void PonerArco(int u, int v, double peso)
         {
             NodoArista nuevo = new NodoArista(v, peso);
             if (cabezas[u] == null)
             {
+                // Lista vacía: el nuevo nodo es a la vez la cabeza y la cola
                 cabezas[u] = nuevo;
                 colas[u] = nuevo;
             }
             else
             {
+                // Lista con elementos: se enlaza después de la cola y se actualiza la cola
                 colas[u]!.Siguiente = nuevo;
                 colas[u] = nuevo;
             }
         }
 
-        // Distancia en kilómetros entre dos paradas (fórmula de Haversine).
+        // Cálculo de distancia 
+        // Fórmula que calcula la distancia entre dos puntos (latitud/longitud)
+        // El resultado está en kilómetros.
         public static double DistanciaHaversine(Parada a, Parada b)
         {
+            // Convertimos grados a radianes (grados * PI / 180)
             double lat1 = a.Latitud * Math.PI / 180.0;
             double lat2 = b.Latitud * Math.PI / 180.0;
-            double dLat = (b.Latitud - a.Latitud) * Math.PI / 180.0;
-            double dLon = (b.Longitud - a.Longitud) * Math.PI / 180.0;
+            double dLat = (b.Latitud - a.Latitud) * Math.PI / 180.0; // Diferencia de latitudes
+            double dLon = (b.Longitud - a.Longitud) * Math.PI / 180.0; // Diferencia de longitudes
+            // "h" es la parte interna de la fórmula de Haversine
             double h = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(lat1) * Math.Cos(lat2) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            // 6371 = radio medio de la Tierra en km
             return 6371.0 * 2 * Math.Atan2(Math.Sqrt(h), Math.Sqrt(1 - h));
         }
 
-        // Dijkstra (camino de menor costo) con MinHeap propio
+
+        /// ALGORITMO DE DIJKSTRA: Determina la ruta óptima de menor costo usando la MinHeap propia.
+        /// Idea: ir "fijando" siempre el vértice no procesado con menor distancia conocida
+        /// y, desde él, intentar mejorar las distancias de sus vecinos.
         public RutaResultado Dijkstra(string codigoOrigen, string codigoDestino)
         {
             RutaResultado resultado = new RutaResultado();
             int origen = ObtenerIndice(codigoOrigen);
             int destino = ObtenerIndice(codigoDestino);
 
-            double[] dist = new double[cantidadSlots];
-            int[] anterior = new int[cantidadSlots];
-            bool[] procesado = new bool[cantidadSlots];
+            double[] dist = new double[cantidadSlots];   // dist[i] = mejor distancia conocida desde el origen hasta i
+            int[] anterior = new int[cantidadSlots];     // anterior[i] = vértice previo en el mejor camino (para reconstruirlo)
+            bool[] procesado = new bool[cantidadSlots];  // true cuando la distancia de i ya es definitiva
 
+            // Al inicio todo es inalcanzable (infinito) y sin predecesor (-1)
             for (int i = 0; i < cantidadSlots; i++)
             {
                 dist[i] = double.PositiveInfinity;
                 anterior[i] = -1;
             }
-            dist[origen] = 0;
+            dist[origen] = 0; // La distancia del origen a sí mismo es 0
 
             MinHeap cola = new MinHeap();
             cola.Insertar(origen, 0);
 
+            // Mientras queden elementos en la cola, sacamos el de menor distancia (u, d)
             while (cola.ExtraerMin(out int u, out double d))
             {
+                // Un vértice puede estar varias veces en la cola con distancias distintas;
+                // si ya fue procesado, esta entrada es vieja y se descarta
                 if (procesado[u]) continue;
                 procesado[u] = true;
-                if (u == destino) break;
+                if (u == destino) break; // Ya tenemos el camino óptimo al destino, no hace falta seguir
 
+                // Recorremos la lista enlazada de vecinos de u
                 for (NodoArista? a = cabezas[u]; a != null; a = a.Siguiente)
                 {
                     int v = a.Destino;
-                    if (procesado[v]) continue;
+                    if (procesado[v]) continue; // Si ya es definitivo, no se puede mejorar
 
+                    // Distancia al vecino pasando por u
                     double nueva = d + a.Peso;
+                    // Si este camino es mejor que el que se conocía, lo actualizamos (relajación)
                     if (nueva < dist[v])
                     {
                         dist[v] = nueva;
@@ -483,12 +546,15 @@ namespace ProyectoRedTransporte
                 }
             }
 
+            // Si la distancia al destino sigue siendo infinita, nunca se pudo llegar a él
             if (double.IsPositiveInfinity(dist[destino]))
             {
-                resultado.Mensaje = "No hay ruta.";
+                resultado.Mensaje = "No hay ruta disponible entre los puntos indicados.";
                 return resultado;
             }
 
+            // Reconstrucción del camino desde el destino hacia el origen
+            // Paso 1: contar cuántos vértices tiene el camino siguiendo "anterior"
             int largo = 0;
             for (int v = destino; v != -1; v = anterior[v])
             {
@@ -496,6 +562,8 @@ namespace ProyectoRedTransporte
                 if (v == origen) break;
             }
 
+            // Paso 2: llenar el arreglo de atrás hacia adelante
+            // (se recorre del destino al origen, pero se guarda en orden origen -> destino)
             int[] camino = new int[largo];
             int pos = largo - 1;
             for (int v = destino; pos >= 0; v = anterior[v])
@@ -504,6 +572,7 @@ namespace ProyectoRedTransporte
                 pos--;
             }
 
+            // Paso 3: convertir los índices del camino en códigos y objetos Parada
             resultado.Codigos = new string[largo];
             resultado.Paradas = new Parada[largo];
             for (int i = 0; i < largo; i++)
@@ -518,6 +587,86 @@ namespace ProyectoRedTransporte
             return resultado;
         }
 
+
+        /// RECORRIDO BFS (Búsqueda en Anchura)
+        /// Devuelve un arreglo nativo string[] con los nombres/códigos visitados.
+        /// Visita primero todos los vecinos directos, luego los vecinos de esos, y así por niveles.
+        public string[] BFS(string codigoOrigen, out int totalVisitados)
+        {
+            totalVisitados = 0;
+            int origen = ObtenerIndice(codigoOrigen);
+            if (origen == -1) return new string[0]; // El origen no existe
+
+            bool[] visitado = new bool[cantidadSlots];       // Evita visitar un vértice dos veces
+            string[] resultado = new string[cantidadSlots]; // Arreglo nativo estático
+            Queue<int> cola = new Queue<int>();             // Control de orden BFS autorizado (cola FIFO)
+
+            // Se marca el origen como visitado al ENCOLARLO (no al sacarlo),
+            // para que no se encole más de una vez
+            visitado[origen] = true;
+            cola.Enqueue(origen);
+
+            while (cola.Count > 0)
+            {
+                int u = cola.Dequeue(); // Sale el más antiguo de la cola
+                resultado[totalVisitados] = codigos[u]; // Se registra en el orden de visita
+                totalVisitados++;
+
+                // Se encolan todos los vecinos aún no visitados
+                for (NodoArista? a = cabezas[u]; a != null; a = a.Siguiente)
+                {
+                    int v = a.Destino;
+                    if (!visitado[v])
+                    {
+                        visitado[v] = true;
+                        cola.Enqueue(v);
+                    }
+                }
+            }
+            return resultado;
+        }
+
+
+        /// RECORRIDO DFS (Búsqueda en Profundidad)
+        /// Devuelve un arreglo nativo string[] con la secuencia de exploración.
+        /// Avanza lo más profundo posible por un camino antes de retroceder y probar otro.
+        public string[] DFS(string codigoOrigen, out int totalVisitados)
+        {
+            totalVisitados = 0;
+            int origen = ObtenerIndice(codigoOrigen);
+            if (origen == -1) return new string[0]; // El origen no existe
+
+            bool[] visitado = new bool[cantidadSlots];
+            string[] resultado = new string[cantidadSlots];
+
+            // Inicia la exploración recursiva por profundidad
+            DFSRecursivo(origen, visitado, resultado, ref totalVisitados);
+
+            return resultado;
+        }
+
+        // Método auxiliar recursivo para DFS
+        // "ref totalVisitados" permite que el contador se comparta entre todas las llamadas recursivas
+        private void DFSRecursivo(int u, bool[] visitado, string[] resultado, ref int totalVisitados)
+        {
+            // Se marca y registra el vértice actual
+            visitado[u] = true;
+            resultado[totalVisitados] = codigos[u];
+            totalVisitados++;
+
+            // Por cada vecino no visitado, nos "metemos" a explorarlo de inmediato (recursión)
+            for (NodoArista? a = cabezas[u]; a != null; a = a.Siguiente)
+            {
+                int v = a.Destino;
+                if (!visitado[v])
+                {
+                    DFSRecursivo(v, visitado, resultado, ref totalVisitados);
+                }
+            }
+        }
+
+        // Duplica la capacidad de los arreglos nativos del Grafo
+        // Crea arreglos nuevos del doble de tamaño y copia lo existente
         private void CrecerArreglos()
         {
             int nueva = capacidad * 2;
@@ -533,10 +682,10 @@ namespace ProyectoRedTransporte
                 nCabezas[i] = cabezas[i];
                 nColas[i] = colas[i];
             }
+            // Se reemplazan los arreglos viejos por los nuevos y se actualiza la capacidad
             codigos = nCodigos; paradas = nParadas; cabezas = nCabezas; colas = nColas; capacidad = nueva;
         }
     }
-
     // =====================================================================
     // INTEGRANTE 3: ESTRUCTURA UNION-FIND Y PERSISTENCIA DE DATOS
     // =====================================================================

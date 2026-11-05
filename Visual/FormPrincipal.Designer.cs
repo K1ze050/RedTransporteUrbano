@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,6 +12,8 @@ namespace ProyectoRedTransporte
         private ListBox lstSugerenciasOrigen;
         private TextBox txtBusquedaDestino;
         private ListBox lstSugerenciasDestino;
+        private Button btnEjecutarBFS;
+        private Button btnEjecutarDFS;
         private Button btnCargarDatos;
         private Button btnCalcularRuta;
         private RichTextBox rtbConsola;
@@ -45,12 +47,18 @@ namespace ProyectoRedTransporte
             lstSugerenciasDestino.SelectedIndexChanged += (s, e) => SeleccionarParada(lstSugerenciasDestino, ref codigoDestinoSeleccionado, lblDestinoSel, "Destino");
             lblDestinoSel = new Label { Text = "Destino seleccionado: Ninguno", Bounds = new Rectangle(300, 280, 250, 40), ForeColor = Color.DarkBlue };
 
-            btnCalcularRuta = new Button { Text = "EJECUTAR FLUJO (Calcular Ruta)", Bounds = new Rectangle(580, 170, 180, 100), BackColor = Color.LightGreen, Font = new Font("Arial", 10, FontStyle.Bold) };
+            btnCalcularRuta = new Button { Text = "DIJKSTRA (Ruta Óptima)", Bounds = new Rectangle(580, 140, 180, 45), BackColor = Color.LightGreen, Font = new Font("Arial", 9, FontStyle.Bold) };
             btnCalcularRuta.Click += BtnCalcularRuta_Click;
+
+            btnEjecutarBFS = new Button { Text = "RECORRIDO BFS (Anchura)", Bounds = new Rectangle(580, 195, 180, 45), BackColor = Color.LightSkyBlue, Font = new Font("Arial", 9, FontStyle.Bold) };
+            btnEjecutarBFS.Click += BtnEjecutarBFS_Click;
+
+            btnEjecutarDFS = new Button { Text = "RECORRIDO DFS (Profundidad)", Bounds = new Rectangle(580, 250, 180, 45), BackColor = Color.LightCoral, Font = new Font("Arial", 9, FontStyle.Bold) };
+            btnEjecutarDFS.Click += BtnEjecutarDFS_Click;
 
             rtbConsola = new RichTextBox { Bounds = new Rectangle(20, 330, 740, 200), ReadOnly = true, Font = new Font("Consolas", 10), BackColor = Color.Black, ForeColor = Color.Lime };
 
-            this.Controls.AddRange(new Control[] { lblTitulo, btnCargarDatos, lblOri, txtBusquedaOrigen, lstSugerenciasOrigen, lblOrigenSel, lblDes, txtBusquedaDestino, lstSugerenciasDestino, lblDestinoSel, btnCalcularRuta, rtbConsola });
+            this.Controls.AddRange(new Control[] { lblTitulo, btnCargarDatos, lblOri, txtBusquedaOrigen, lstSugerenciasOrigen, lblOrigenSel, lblDes, txtBusquedaDestino, lstSugerenciasDestino, lblDestinoSel, btnCalcularRuta, btnEjecutarBFS, btnEjecutarDFS, rtbConsola });
         }
     }
 }

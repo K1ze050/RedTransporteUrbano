@@ -7,12 +7,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-	
+
 	<ItemGroup>
-		<None Update="paradas.csv">
+		<None Include="Datos\paradas.csv">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="conexiones.csv">
+		<None Include="Datos\conexiones.csv">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

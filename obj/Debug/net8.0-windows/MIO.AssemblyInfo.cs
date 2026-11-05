@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MIO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f26d4bba77425f4c3ba255628ed40eb608c9302")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea947dc25915c82e457dfaa993674117e62221b0")]
 [assembly: System.Reflection.AssemblyProductAttribute("MIO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MIO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
